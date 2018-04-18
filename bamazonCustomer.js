@@ -27,6 +27,40 @@ function start() {
       if (err) throw err;
       // Log all results of the SELECT statement
       console.log(res);
-      connection.end();
+      Purchase();
     });
   }
+
+  function Purchase() {
+    // prompt for info about the item being put up for auction
+    inquirer
+      .prompt([
+        {
+          name: "item",
+          type: "input",
+          message: "What is the item you would like to purchase?"
+        },
+        {
+          name: "quantity",
+          type: "input",
+          message: "How much would you like to purchase?"
+        },
+      ])
+      .then(function(answer) {
+      var query = connection.query(
+        "UPDATE products SET ? WHERE ?",
+        [
+          {
+          product_name: answer.item,
+          },
+          {
+            quantity: answer.quantity,
+          }
+        ],
+        function(err, res) {
+          console.log(res.affectedRows + " products updated!\n");
+          connection.end();
+        }
+    )
+});
+};

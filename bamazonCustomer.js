@@ -25,20 +25,18 @@ function start() {
     console.log("Products available for purchase: ");
     connection.query("SELECT * FROM products", function(err, res) {
       if (err) throw err;
-      // Log all results of the SELECT statement
       console.log(res);
       Purchase();
     });
-  }
+  };
 
   function Purchase() {
-    // prompt for info about the item being put up for auction
     inquirer
       .prompt([
         {
-          name: "item",
+          name: "id",
           type: "input",
-          message: "What is the item you would like to purchase?"
+          message: "What is the id of the product you wish to purchase?"
         },
         {
           name: "quantity",
@@ -47,20 +45,26 @@ function start() {
         },
       ])
       .then(function(answer) {
-      var query = connection.query(
-        "UPDATE products SET ? WHERE ?",
-        [
-          {
-          product_name: answer.item,
-          },
-          {
-            quantity: answer.quantity,
-          }
-        ],
-        function(err, res) {
-          console.log(res.affectedRows + " products updated!\n");
-          connection.end();
+        var customerQuantity = answer.quantity;
+        var customerId = answer.id;
+
+          var query = connection.query(
+            "UPDATE products SET ? WHERE ?",
+            [
+              {
+                quantity: customerQuantity
+              },
+              {
+                item_id: customerId
+              }
+            ],
+            function(err, res) {
+              if (err) throw err;
+              console.log (customerQuantity);
+              console.log("Purchase Sucessful");
+              connection.end();
+            }
+          );
         }
-    )
-});
-};
+      )}
+          
